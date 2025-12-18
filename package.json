@@ -12,8 +12,13 @@
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.80",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
     "clsx": "^2.1.1",
     "convex": "^1.24.2",
+    "framer-motion": "^12.23.26",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sonner": "^2.0.7",

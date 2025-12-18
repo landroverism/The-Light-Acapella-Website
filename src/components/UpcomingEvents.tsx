@@ -1,6 +1,26 @@
 import React from 'react';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Chip,
+  Button,
+  Stack,
+} from '@mui/material';
+import {
+  CalendarToday as CalendarIcon,
+  AccessTime as TimeIcon,
+  LocationOn as LocationIcon,
+  Instagram as InstagramIcon,
+} from '@mui/icons-material';
+import { motion } from 'framer-motion';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { fadeInUp, staggerContainer, staggerContainerSlow } from '../utils/motion';
+import { colors } from '../theme/theme';
 
 const UpcomingEvents: React.FC = () => {
   const events = useQuery(api.events.list) || [];
@@ -8,41 +28,41 @@ const UpcomingEvents: React.FC = () => {
   // Sample events for demonstration
   const sampleEvents = [
     {
-      title: "Sunday Morning Worship",
-      date: "2024-03-17",
-      time: "10:00 AM",
-      location: "Syokimau Central SDA Church",
-      type: "Church Service",
-      status: "confirmed",
-      description: "Join us for uplifting worship through a cappella ministry music."
+      title: 'Sunday Morning Worship',
+      date: '2024-03-17',
+      time: '10:00 AM',
+      location: 'Syokimau Central SDA Church',
+      type: 'Church Service',
+      status: 'confirmed',
+      description: 'Join us for uplifting worship through a cappella ministry music.',
     },
     {
-      title: "Wedding Ceremony Performance",
-      date: "2024-03-23",
-      time: "2:00 PM",
-      location: "Nairobi Wedding Gardens",
-      type: "Private Event",
-      status: "confirmed",
-      description: "Special performance for Sarah & Michael's wedding ceremony."
+      title: 'Wedding Ceremony Performance',
+      date: '2024-03-23',
+      time: '2:00 PM',
+      location: 'Nairobi Wedding Gardens',
+      type: 'Private Event',
+      status: 'confirmed',
+      description: "Special performance for Sarah & Michael's wedding ceremony.",
     },
     {
-      title: "Youth Conference 2024",
-      date: "2024-04-05",
-      time: "7:00 PM",
-      location: "Adventist University of Africa",
-      type: "Conference",
-      status: "tentative",
-      description: "Inspiring young hearts through gospel a cappella music."
+      title: 'Youth Conference 2024',
+      date: '2024-04-05',
+      time: '7:00 PM',
+      location: 'Adventist University of Africa',
+      type: 'Conference',
+      status: 'tentative',
+      description: 'Inspiring young hearts through gospel a cappella music.',
     },
     {
-      title: "Corporate Dinner Event",
-      date: "2024-04-12",
-      time: "6:30 PM",
-      location: "Serena Hotel, Nairobi",
-      type: "Corporate Event",
-      status: "confirmed",
-      description: "Professional performance for annual company celebration."
-    }
+      title: 'Corporate Dinner Event',
+      date: '2024-04-12',
+      time: '6:30 PM',
+      location: 'Serena Hotel, Nairobi',
+      type: 'Corporate Event',
+      status: 'confirmed',
+      description: 'Professional performance for annual company celebration.',
+    },
   ];
 
   const displayEvents = events.length > 0 ? events : sampleEvents;
@@ -53,145 +73,304 @@ const UpcomingEvents: React.FC = () => {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
   const getEventTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
       case 'church service':
-        return 'bg-blue-600';
+        return colors.eventTypes.church;
       case 'private event':
-        return 'bg-purple-600';
+        return colors.eventTypes.private;
       case 'conference':
-        return 'bg-green-600';
+        return colors.eventTypes.conference;
       case 'corporate event':
-        return 'bg-orange-600';
+        return colors.eventTypes.corporate;
       default:
-        return 'bg-gray-600';
+        return '#6B7280';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'confirmed':
-        return 'text-green-400';
+        return colors.status.confirmed;
       case 'tentative':
-        return 'text-yellow-400';
+        return colors.status.tentative;
       case 'past':
-        return 'text-gray-400';
+        return colors.status.past;
       default:
-        return 'text-white';
+        return '#FFFFFF';
     }
   };
 
-  // Filter upcoming events (future dates)
-  const upcomingEvents = displayEvents.filter(event => {
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return eventDate >= today;
-  }).slice(0, 4); // Show only next 4 events
+  // Filter upcoming events
+  const upcomingEvents = displayEvents
+    .filter((event) => {
+      const eventDate = new Date(event.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return eventDate >= today;
+    })
+    .slice(0, 4);
 
   return (
-    <section id="events" className="section-padding">
-      <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Upcoming <span className="text-gold">Events</span>
-          </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Join us at our upcoming performances and experience the power of live a cappella worship. 
-            Each event is an opportunity to connect, worship, and be inspired.
-          </p>
-        </div>
+    <Box
+      id="events"
+      component="section"
+      sx={{
+        py: { xs: 8, md: 12 },
+        backgroundColor: 'background.default',
+      }}
+    >
+      <Container maxWidth="lg">
+        {/* Section Header */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+        >
+          <motion.div variants={fadeInUp}>
+            <Typography
+              variant="h2"
+              align="center"
+              sx={{
+                mb: 2,
+                fontSize: { xs: '2rem', md: '3rem' },
+              }}
+            >
+              Upcoming{' '}
+              <Box component="span" sx={{ color: 'primary.main' }}>
+                Events
+              </Box>
+            </Typography>
+          </motion.div>
 
+          <motion.div variants={fadeInUp}>
+            <Typography
+              variant="h6"
+              align="center"
+              sx={{
+                color: 'text.secondary',
+                maxWidth: 700,
+                mx: 'auto',
+                mb: 8,
+                fontWeight: 400,
+              }}
+            >
+              Join us at our upcoming performances and experience the power of live a cappella
+              worship. Each event is an opportunity to connect, worship, and be inspired.
+            </Typography>
+          </motion.div>
+        </motion.div>
+
+        {/* Events Grid */}
         {upcomingEvents.length > 0 ? (
-          <div className="grid md:grid-cols-2 gap-8">
-            {upcomingEvents.map((event, index) => (
-              <div key={index} className="card fade-in">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-2 text-white">{event.title}</h3>
-                    <div className="flex items-center mb-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getEventTypeColor(event.type)}`}>
-                        {event.type}
-                      </span>
-                      <span className={`ml-3 text-sm font-semibold ${getStatusColor(event.status)}`}>
-                        {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <motion.div
+            variants={staggerContainerSlow}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
+            <Grid container spacing={4}>
+              {upcomingEvents.map((event, index) => (
+                <Grid item xs={12} md={6} key={index}>
+                  <motion.div variants={fadeInUp}>
+                    <Card
+                      sx={{
+                        height: '100%',
+                        position: 'relative',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: 4,
+                          height: '100%',
+                          backgroundColor: getEventTypeColor(event.type),
+                          borderRadius: '16px 0 0 16px',
+                        },
+                      }}
+                    >
+                      <CardContent sx={{ pl: 4 }}>
+                        {/* Header */}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                            mb: 2,
+                            flexWrap: 'wrap',
+                            gap: 1,
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: 600,
+                              flex: 1,
+                              minWidth: 200,
+                            }}
+                          >
+                            {event.title}
+                          </Typography>
+                          <Stack direction="row" spacing={1}>
+                            <Chip
+                              label={event.type}
+                              size="small"
+                              sx={{
+                                backgroundColor: `${getEventTypeColor(event.type)}20`,
+                                color: getEventTypeColor(event.type),
+                                fontWeight: 500,
+                              }}
+                            />
+                            <Chip
+                              label={event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                              size="small"
+                              sx={{
+                                backgroundColor: `${getStatusColor(event.status)}20`,
+                                color: getStatusColor(event.status),
+                                fontWeight: 500,
+                              }}
+                            />
+                          </Stack>
+                        </Box>
 
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center text-gray-300">
-                    <svg className="w-5 h-5 mr-3 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span>{formatDate(event.date)}</span>
-                  </div>
-                  
-                  <div className="flex items-center text-gray-300">
-                    <svg className="w-5 h-5 mr-3 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{event.time}</span>
-                  </div>
-                  
-                  <div className="flex items-center text-gray-300">
-                    <svg className="w-5 h-5 mr-3 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>{event.location}</span>
-                  </div>
-                </div>
+                        {/* Event Details */}
+                        <Stack spacing={1.5} sx={{ mb: 2 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <CalendarIcon
+                              sx={{ fontSize: 20, color: 'primary.main' }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                              {formatDate(event.date)}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <TimeIcon sx={{ fontSize: 20, color: 'primary.main' }} />
+                            <Typography variant="body2" color="text.secondary">
+                              {event.time}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <LocationIcon
+                              sx={{ fontSize: 20, color: 'primary.main' }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                              {event.location}
+                            </Typography>
+                          </Box>
+                        </Stack>
 
-                {event.description && (
-                  <p className="text-gray-400 text-sm mb-4">{event.description}</p>
-                )}
+                        {/* Description */}
+                        {event.description && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: 'text.secondary',
+                              mb: 2,
+                              lineHeight: 1.7,
+                            }}
+                          >
+                            {event.description}
+                          </Typography>
+                        )}
 
-                {event.type.toLowerCase() !== 'private event' && (
-                  <div className="flex space-x-3">
-                    <button className="btn-secondary text-sm px-4 py-2">
-                      Learn More
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                        {/* Action Button */}
+                        {event.type.toLowerCase() !== 'private event' && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                              borderColor: 'primary.main',
+                              color: 'primary.main',
+                              '&:hover': {
+                                borderColor: 'primary.main',
+                                backgroundColor: 'rgba(255, 215, 0, 0.08)',
+                              },
+                            }}
+                          >
+                            Learn More
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+              ))}
+            </Grid>
+          </motion.div>
         ) : (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-6">🎵</div>
-            <h3 className="text-2xl font-bold mb-4 text-white">No Upcoming Events</h3>
-            <p className="text-gray-400 mb-8">
-              We're currently planning our next performances. Stay tuned for updates!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="https://instagram.com/thelightacapella" 
-                target="_blank" 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Typography variant="h1" sx={{ fontSize: '4rem', mb: 3 }}>
+                🎵
+              </Typography>
+              <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+                No Upcoming Events
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                  mb: 4,
+                }}
+              >
+                We're currently planning our next performances. Stay tuned for updates!
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<InstagramIcon />}
+                href="https://instagram.com/thelightacapella"
+                target="_blank"
                 rel="noopener noreferrer"
-                className="btn-secondary"
               >
                 Follow for Updates
-              </a>
-            </div>
-          </div>
+              </Button>
+            </Box>
+          </motion.div>
         )}
 
-        <div className="text-center mt-16">
-          <p className="text-lg text-gray-300 mb-6">
-            Want us to perform at your event?
-          </p>
-          <button className="btn-primary text-lg px-8 py-4">
-            Book Us Now
-          </button>
-        </div>
-      </div>
-    </section>
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Box sx={{ textAlign: 'center', mt: 10 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                color: 'text.secondary',
+                mb: 4,
+                fontWeight: 400,
+              }}
+            >
+              Want us to perform at your event?
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                px: 5,
+                py: 1.5,
+                fontSize: '1.1rem',
+              }}
+            >
+              Book Us Now
+            </Button>
+          </Box>
+        </motion.div>
+      </Container>
+    </Box>
   );
 };
 

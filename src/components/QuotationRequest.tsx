@@ -1,4 +1,16 @@
 import React, { useState } from 'react';
+import {
+  Box,
+  Grid,
+  TextField,
+  Button,
+  FormControlLabel,
+  Checkbox,
+  MenuItem,
+  Typography,
+  CircularProgress,
+  Stack,
+} from '@mui/material';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
@@ -6,6 +18,23 @@ import { toast } from 'sonner';
 interface QuotationRequestProps {
   onClose: () => void;
 }
+
+const eventTypes = [
+  { value: 'wedding', label: 'Wedding' },
+  { value: 'corporate', label: 'Corporate Event' },
+  { value: 'church', label: 'Church Service' },
+  { value: 'private', label: 'Private Party' },
+  { value: 'outdoor', label: 'Outdoor Event' },
+  { value: 'other', label: 'Other' },
+];
+
+const durationOptions = [
+  { value: '15-30 minutes', label: '15-30 minutes' },
+  { value: '30-45 minutes', label: '30-45 minutes' },
+  { value: '45-60 minutes', label: '45-60 minutes' },
+  { value: '60+ minutes', label: '60+ minutes' },
+  { value: 'flexible', label: 'Flexible' },
+];
 
 const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -19,17 +48,20 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
     duration: '',
     amplificationNeeded: false,
     specificSongs: '',
-    specialRequests: ''
+    specialRequests: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createQuotation = useMutation(api.quotations.create);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]:
+        type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -39,7 +71,9 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
 
     try {
       await createQuotation(formData);
-      toast.success('Quotation request submitted successfully! We\'ll contact you within 24 hours.');
+      toast.success(
+        "Quotation request submitted successfully! We'll contact you within 24 hours."
+      );
       onClose();
     } catch (error) {
       toast.error('Failed to submit request. Please try again.');
@@ -49,177 +83,201 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-white">Full Name *</label>
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-white">Phone Number *</label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
-      </div>
+    <Box component="form" onSubmit={handleSubmit}>
+      <Stack spacing={3}>
+        {/* Personal Information */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Full Name"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Phone Number"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+        </Grid>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2 text-white">Email Address *</label>
-        <input
-          type="email"
+        <TextField
+          fullWidth
+          label="Email Address"
           name="email"
+          type="email"
           value={formData.email}
           onChange={handleInputChange}
-          className="input-field"
           required
         />
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-white">Event Type *</label>
-          <select
-            name="eventType"
-            value={formData.eventType}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          >
-            <option value="">Select event type</option>
-            <option value="wedding">Wedding</option>
-            <option value="corporate">Corporate Event</option>
-            <option value="church">Church Service</option>
-            <option value="private">Private Party</option>
-            <option value="outdoor">Outdoor Event</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-white">Event Date *</label>
-          <input
-            type="date"
-            name="eventDate"
-            value={formData.eventDate}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
-      </div>
+        {/* Event Details */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              select
+              label="Event Type"
+              name="eventType"
+              value={formData.eventType}
+              onChange={handleInputChange}
+              required
+            >
+              {eventTypes.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Event Date"
+              name="eventDate"
+              type="date"
+              value={formData.eventDate}
+              onChange={handleInputChange}
+              required
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+        </Grid>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2 text-white">Event Location *</label>
-        <input
-          type="text"
+        <TextField
+          fullWidth
+          label="Event Location"
           name="location"
           value={formData.location}
           onChange={handleInputChange}
-          className="input-field"
           placeholder="Venue name and address"
           required
         />
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-white">Expected Guest Count</label>
-          <input
-            type="text"
-            name="guestCount"
-            value={formData.guestCount}
-            onChange={handleInputChange}
-            className="input-field"
-            placeholder="e.g., 50-100 guests"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-white">Performance Duration</label>
-          <select
-            name="duration"
-            value={formData.duration}
-            onChange={handleInputChange}
-            className="input-field"
-          >
-            <option value="">Select duration</option>
-            <option value="15-30 minutes">15-30 minutes</option>
-            <option value="30-45 minutes">30-45 minutes</option>
-            <option value="45-60 minutes">45-60 minutes</option>
-            <option value="60+ minutes">60+ minutes</option>
-            <option value="flexible">Flexible</option>
-          </select>
-        </div>
-      </div>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Expected Guest Count"
+              name="guestCount"
+              value={formData.guestCount}
+              onChange={handleInputChange}
+              placeholder="e.g., 50-100 guests"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              select
+              label="Performance Duration"
+              name="duration"
+              value={formData.duration}
+              onChange={handleInputChange}
+            >
+              <MenuItem value="">Select duration</MenuItem>
+              {durationOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
 
-      <div>
-        <label className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            name="amplificationNeeded"
-            checked={formData.amplificationNeeded}
-            onChange={handleInputChange}
-            className="w-4 h-4 text-gold bg-gray-700 border-gray-600 rounded focus:ring-gold"
-          />
-          <span className="text-white">Amplification/Sound System Needed</span>
-        </label>
-      </div>
+        {/* Amplification */}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.amplificationNeeded}
+              onChange={handleInputChange}
+              name="amplificationNeeded"
+              sx={{
+                color: 'text.secondary',
+                '&.Mui-checked': {
+                  color: 'primary.main',
+                },
+              }}
+            />
+          }
+          label="Amplification/Sound System Needed"
+          sx={{ color: 'text.primary' }}
+        />
 
-      <div>
-        <label className="block text-sm font-semibold mb-2 text-white">Specific Song Requests</label>
-        <textarea
+        {/* Additional Requests */}
+        <TextField
+          fullWidth
+          multiline
+          rows={3}
+          label="Specific Song Requests"
           name="specificSongs"
           value={formData.specificSongs}
           onChange={handleInputChange}
-          className="input-field"
-          rows={3}
           placeholder="Any specific songs you'd like us to perform?"
         />
-      </div>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2 text-white">Special Requests or Notes</label>
-        <textarea
+        <TextField
+          fullWidth
+          multiline
+          rows={3}
+          label="Special Requests or Notes"
           name="specialRequests"
           value={formData.specialRequests}
           onChange={handleInputChange}
-          className="input-field"
-          rows={3}
           placeholder="Any additional information about your event..."
         />
-      </div>
 
-      <div className="flex space-x-4">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn-primary flex-1"
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit Request'}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn-secondary px-6"
-        >
-          Cancel
-        </button>
-      </div>
+        {/* Actions */}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            disabled={isSubmitting}
+            sx={{ flex: 1 }}
+          >
+            {isSubmitting ? (
+              <CircularProgress size={24} sx={{ color: 'primary.contrastText' }} />
+            ) : (
+              'Submit Request'
+            )}
+          </Button>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={onClose}
+            sx={{
+              px: 4,
+              borderColor: 'text.secondary',
+              color: 'text.secondary',
+              '&:hover': {
+                borderColor: 'text.primary',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+        </Stack>
 
-      <p className="text-sm text-gray-400 text-center">
-        We'll review your request and contact you within 24 hours with a personalized quote.
-      </p>
-    </form>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ color: 'text.secondary', mt: 1 }}
+        >
+          We'll review your request and contact you within 24 hours with a
+          personalized quote.
+        </Typography>
+      </Stack>
+    </Box>
   );
 };
 

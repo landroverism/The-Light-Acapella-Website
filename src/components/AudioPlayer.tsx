@@ -1,4 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
+import {
+  Box,
+  IconButton,
+  Typography,
+  Slider,
+  CircularProgress,
+  Paper,
+} from '@mui/material';
+import {
+  PlayArrow as PlayIcon,
+  Pause as PauseIcon,
+} from '@mui/icons-material';
+import { motion } from 'framer-motion';
 
 interface Song {
   id: string;
@@ -11,12 +24,14 @@ interface AudioPlayerProps {
   song: Song;
   currentlyPlaying: string | null;
   setCurrentlyPlaying: (id: string | null) => void;
+  compact?: boolean;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ 
-  song, 
-  currentlyPlaying, 
-  setCurrentlyPlaying 
+const AudioPlayer: React.FC<AudioPlayerProps> = ({
+  song,
+  currentlyPlaying,
+  setCurrentlyPlaying,
+  compact = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -73,22 +88,17 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       setIsPlaying(false);
       setCurrentlyPlaying(null);
     } else {
-      // Pause any other playing audio
       setCurrentlyPlaying(song.id);
       audio.play();
       setIsPlaying(true);
     }
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleSliderChange = (_: Event, newValue: number | number[]) => {
     const audio = audioRef.current;
     if (!audio || !duration) return;
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    const newTime = (clickX / width) * duration;
-    
+    const newTime = newValue as number;
     audio.currentTime = newTime;
     setCurrentTime(newTime);
   };
@@ -100,52 +110,115 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const progressPercentage = duration ? (currentTime / duration) * 100 : 0;
-
   return (
-    <div className="audio-player">
+    <Paper
+      component={motion.div}
+      whileHover={{ scale: 1.01 }}
+      elevation={2}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: { xs: 1.5, md: 2 },
+        p: { xs: 1.5, md: 2 },
+        borderRadius: 3,
+        backgroundColor: 'background.paper',
+        border: isCurrentlyPlaying && isPlaying ? 1 : 0,
+        borderColor: 'primary.main',
+        transition: 'all 0.3s ease',
+      }}
+    >
       <audio ref={audioRef} src={song.audioUrl} preload="metadata" />
-      
+
       {/* Play/Pause Button */}
-      <button 
+      <IconButton
         onClick={togglePlay}
-        className="play-button"
         disabled={isLoading}
+        sx={{
+          width: compact ? 44 : 52,
+          height: compact ? 44 : 52,
+          backgroundColor: 'primary.main',
+          color: 'primary.contrastText',
+          '&:hover': {
+            backgroundColor: 'primary.dark',
+            transform: 'scale(1.05)',
+          },
+          '&:disabled': {
+            backgroundColor: 'primary.main',
+          },
+          transition: 'all 0.2s ease',
+        }}
       >
         {isLoading ? (
-          <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+          <CircularProgress size={24} sx={{ color: 'primary.contrastText' }} />
         ) : isPlaying && isCurrentlyPlaying ? (
-          <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
+          <PauseIcon sx={{ fontSize: compact ? 24 : 28 }} />
         ) : (
-          <svg className="w-5 h-5 text-black ml-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-          </svg>
+          <PlayIcon sx={{ fontSize: compact ? 24 : 28, ml: 0.3 }} />
         )}
-      </button>
+      </IconButton>
 
       {/* Song Info and Progress */}
-      <div className="flex-1">
-        <div className="flex justify-between items-center mb-2">
-          <h4 className="font-semibold text-white">{song.title}</h4>
-          <span className="text-sm text-gray-400">
-            {formatTime(currentTime)} / {formatTime(duration) || song.duration}
-          </span>
-        </div>
-        
-        {/* Progress Bar */}
-        <div 
-          className="progress-bar cursor-pointer"
-          onClick={handleProgressClick}
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 0.5,
+          }}
         >
-          <div 
-            className="progress-fill"
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
-        </div>
-      </div>
-    </div>
+          <Typography
+            variant={compact ? 'body2' : 'subtitle1'}
+            sx={{
+              fontWeight: 600,
+              color: 'text.primary',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              pr: 1,
+            }}
+          >
+            {song.title}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+              flexShrink: 0,
+              fontFamily: 'monospace',
+            }}
+          >
+            {formatTime(currentTime)} / {formatTime(duration) || song.duration}
+          </Typography>
+        </Box>
+
+        {/* Progress Slider */}
+        <Slider
+          value={currentTime}
+          max={duration || 100}
+          onChange={handleSliderChange}
+          size="small"
+          sx={{
+            height: 4,
+            padding: '8px 0',
+            '& .MuiSlider-thumb': {
+              width: 12,
+              height: 12,
+              transition: 'all 0.2s ease',
+              '&:hover, &.Mui-focusVisible': {
+                boxShadow: '0 0 0 8px rgba(255, 215, 0, 0.16)',
+              },
+              '&:before': {
+                display: 'none',
+              },
+            },
+            '& .MuiSlider-rail': {
+              opacity: 0.3,
+            },
+          }}
+        />
+      </Box>
+    </Paper>
   );
 };
 

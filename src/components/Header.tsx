@@ -1,165 +1,342 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemIcon,
+  useScrollTrigger,
+  Container,
+  Typography,
+  Divider,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Home as HomeIcon,
+  MusicNote as MusicNoteIcon,
+  Event as EventIcon,
+  RoomService as ServiceIcon,
+  People as PeopleIcon,
+  BookOnline as BookIcon,
+  Favorite as FavoriteIcon,
+} from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { colors } from '../theme/theme';
 
 interface HeaderProps {
   onOpenModal: (modal: string) => void;
 }
 
+const navItems = [
+  { label: 'Home', id: 'home', icon: <HomeIcon /> },
+  { label: 'Songs', id: 'gallery', icon: <MusicNoteIcon /> },
+  { label: 'Events', id: 'events', icon: <EventIcon /> },
+  { label: 'Services', id: 'services', icon: <ServiceIcon /> },
+  { label: 'Members', id: 'members', icon: <PeopleIcon /> },
+  { label: 'Book Us', id: 'quotation', icon: <BookIcon />, isModal: true },
+];
+
 const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 50,
+  });
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-    setMobileMenuOpen(false);
+    setMobileOpen(false);
   };
 
+  const handleNavClick = (item: typeof navItems[0]) => {
+    if (item.isModal) {
+      onOpenModal(item.id);
+      setMobileOpen(false);
+    } else {
+      scrollToSection(item.id);
+    }
+  };
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  // Mobile drawer content
+  const drawer = (
+    <Box
+      sx={{
+        height: '100%',
+        backgroundColor: 'background.paper',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Drawer Header */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          p: 2,
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            component="img"
+            src="/images/light-logo-rg.png"
+            alt="The Light Acapella"
+            sx={{ height: 40 }}
+          />
+          <Typography
+            sx={{
+              fontFamily: '"Dancing Script", cursive',
+              color: 'primary.main',
+              fontSize: '1.1rem',
+              transform: 'rotate(-3deg)',
+            }}
+          >
+            The Light Acapella
+          </Typography>
+        </Box>
+        <IconButton onClick={handleDrawerToggle} sx={{ color: 'text.primary' }}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+
+      {/* Navigation Items */}
+      <List sx={{ flex: 1, py: 2 }}>
+        {navItems.map((item) => (
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton
+              onClick={() => handleNavClick(item)}
+              sx={{
+                py: 1.5,
+                px: 3,
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 215, 0, 0.08)',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: 'primary.main', minWidth: 40 }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{
+                  fontWeight: 500,
+                  color: 'text.primary',
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+
+      <Divider />
+
+      {/* Donate Button */}
+      <Box sx={{ p: 3 }}>
+        <Button
+          variant="contained"
+          fullWidth
+          startIcon={<FavoriteIcon />}
+          onClick={() => {
+            onOpenModal('donation');
+            setMobileOpen(false);
+          }}
+          sx={{
+            py: 1.5,
+            fontSize: '1rem',
+          }}
+        >
+          Support Our Ministry
+        </Button>
+      </Box>
+    </Box>
+  );
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-black/90 backdrop-blur-sm shadow-lg' : 'bg-transparent'
-    }`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <img 
-              src="/images/light-logo.jpg" 
-              alt="The Light Acapella"
-              className={`transition-all duration-300 ${
-                isScrolled ? 'h-10' : 'h-12'
-              }`}
-            />
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="text-white hover:text-gold transition-colors"
-            >
-              Home
-            </button>
-            <button 
-              onClick={() => scrollToSection('gallery')}
-              className="text-white hover:text-gold transition-colors"
-            >
-              Songs
-            </button>
-            <button 
-              onClick={() => scrollToSection('events')}
-              className="text-white hover:text-gold transition-colors"
-            >
-              Events
-            </button>
-            <button 
-              onClick={() => scrollToSection('services')}
-              className="text-white hover:text-gold transition-colors"
-            >
-              Services
-            </button>
-            <button 
-              onClick={() => scrollToSection('members')}
-              className="text-white hover:text-gold transition-colors"
-            >
-              Members
-            </button>
-            <button 
-              onClick={() => onOpenModal('quotation')}
-              className="text-white hover:text-gold transition-colors"
-            >
-              Book Us
-            </button>
-          </nav>
-
-          {/* Donate Button */}
-          <button 
-            onClick={() => onOpenModal('donation')}
-            className="hidden md:block btn-primary"
+    <>
+      <AppBar
+        position="fixed"
+        elevation={trigger ? 4 : 0}
+        sx={{
+          backgroundColor: trigger ? 'rgba(0, 0, 0, 0.95)' : 'transparent',
+          backdropFilter: trigger ? 'blur(20px)' : 'none',
+          transition: 'all 0.3s ease-in-out',
+          borderBottom: trigger ? 1 : 0,
+          borderColor: 'rgba(255, 215, 0, 0.1)',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar
+            sx={{
+              justifyContent: 'space-between',
+              minHeight: { xs: 64, md: 72 },
+              px: { xs: 0, md: 2 },
+            }}
           >
-            Donate
-          </button>
+            {/* Logo */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: { xs: 1, md: 2 },
+                  cursor: 'pointer',
+                }}
+                onClick={() => scrollToSection('home')}
+              >
+                <Box
+                  component="img"
+                  src="/images/light-logo-rg.png"
+                  alt="The Light Acapella"
+                  sx={{
+                    height: { xs: 44, md: trigger ? 48 : 56 },
+                    transition: 'height 0.3s ease',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontFamily: '"Dancing Script", cursive',
+                    color: 'primary.main',
+                    fontSize: { xs: '1rem', md: trigger ? '1.2rem' : '1.4rem' },
+                    transform: 'rotate(-3deg)',
+                    transition: 'font-size 0.3s ease',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+                    display: { xs: 'none', sm: 'block' },
+                  }}
+                >
+                  The Light Acapella
+                </Typography>
+              </Box>
+            </motion.div>
 
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white p-2"
-          >
-            <div className="w-6 h-6 flex flex-col justify-center items-center">
-              <span className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
-                mobileMenuOpen ? 'rotate-45 translate-y-1' : '-translate-y-0.5'
-              }`}></span>
-              <span className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5 ${
-                mobileMenuOpen ? 'opacity-0' : 'opacity-100'
-              }`}></span>
-              <span className={`bg-white block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
-                mobileMenuOpen ? '-rotate-45 -translate-y-1' : 'translate-y-0.5'
-              }`}></span>
-            </div>
-          </button>
-        </div>
+            {/* Desktop Navigation */}
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <Button
+                    onClick={() => handleNavClick(item)}
+                    sx={{
+                      color: 'text.primary',
+                      fontWeight: 500,
+                      px: 2,
+                      py: 1,
+                      position: 'relative',
+                      '&:hover': {
+                        color: 'primary.main',
+                        backgroundColor: 'transparent',
+                      },
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 4,
+                        left: '50%',
+                        width: 0,
+                        height: 2,
+                        backgroundColor: 'primary.main',
+                        transition: 'all 0.3s ease',
+                        transform: 'translateX(-50%)',
+                        borderRadius: 1,
+                      },
+                      '&:hover::after': {
+                        width: '60%',
+                      },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                </motion.div>
+              ))}
+            </Box>
 
-        {/* Mobile Menu */}
-        <div className={`md:hidden transition-all duration-300 ease-in-out ${
-          mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        } overflow-hidden`}>
-          <nav className="py-4 space-y-4">
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="block w-full text-left text-white hover:text-gold transition-colors py-2"
+            {/* Desktop Donate Button */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              Home
-            </button>
-            <button 
-              onClick={() => scrollToSection('gallery')}
-              className="block w-full text-left text-white hover:text-gold transition-colors py-2"
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <Button
+                  variant="contained"
+                  startIcon={<FavoriteIcon />}
+                  onClick={() => onOpenModal('donation')}
+                  sx={{
+                    px: 3,
+                  }}
+                >
+                  Donate
+                </Button>
+              </Box>
+            </motion.div>
+
+            {/* Mobile Menu Button */}
+            <IconButton
+              edge="end"
+              onClick={handleDrawerToggle}
+              sx={{
+                display: { md: 'none' },
+                color: 'text.primary',
+              }}
             >
-              Songs
-            </button>
-            <button 
-              onClick={() => scrollToSection('events')}
-              className="block w-full text-left text-white hover:text-gold transition-colors py-2"
-            >
-              Events
-            </button>
-            <button 
-              onClick={() => scrollToSection('services')}
-              className="block w-full text-left text-white hover:text-gold transition-colors py-2"
-            >
-              Services
-            </button>
-            <button 
-              onClick={() => scrollToSection('members')}
-              className="block w-full text-left text-white hover:text-gold transition-colors py-2"
-            >
-              Members
-            </button>
-            <button 
-              onClick={() => onOpenModal('quotation')}
-              className="block w-full text-left text-white hover:text-gold transition-colors py-2"
-            >
-              Book Us
-            </button>
-            <button 
-              onClick={() => onOpenModal('donation')}
-              className="btn-primary w-full mt-4"
-            >
-              Donate
-            </button>
-          </nav>
-        </div>
-      </div>
-    </header>
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better mobile performance
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 300,
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
+
+      {/* Toolbar spacer */}
+      <Toolbar sx={{ minHeight: { xs: 64, md: 72 } }} />
+    </>
   );
 };
 

@@ -1,207 +1,396 @@
 import React, { useState } from 'react';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Avatar,
+  Chip,
+  IconButton,
+  MobileStepper,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import {
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  FormatQuote as QuoteIcon,
+} from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { fadeInUp, staggerContainer } from '../utils/motion';
+import { colors } from '../theme/theme';
 
 const MembersShowcase: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const members = useQuery(api.members.list) || [];
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Sample member data for demonstration
   const sampleMembers = [
     {
-      name: "David Mwangi",
-      voicePart: "Lead",
-      imageUrl: "/images/member-1.jpg",
+      name: 'David Mwangi',
+      voicePart: 'Lead',
+      imageUrl: '/images/member-1.jpg',
       yearsWithGroup: 5,
-      testimony: "Music has been my way of connecting with God and sharing His love with others."
+      testimony: 'Music has been my way of connecting with God and sharing His love with others.',
     },
     {
-      name: "Samuel Kiprotich",
-      voicePart: "Tenor",
-      imageUrl: "/images/member-2.jpg",
+      name: 'Samuel Kiprotich',
+      voicePart: 'Tenor',
+      imageUrl: '/images/member-2.jpg',
       yearsWithGroup: 4,
-      testimony: "Through a cappella, I've learned that harmony in music reflects harmony in life."
+      testimony: 'Through a cappella, I\'ve learned that harmony in music reflects harmony in life.',
     },
     {
-      name: "Peter Ochieng",
-      voicePart: "Baritone",
-      imageUrl: "/images/member-3.jpg",
+      name: 'Peter Ochieng',
+      voicePart: 'Baritone',
+      imageUrl: '/images/member-3.jpg',
       yearsWithGroup: 6,
-      testimony: "Every performance is an opportunity to minister and touch someone's heart."
+      testimony: 'Every performance is an opportunity to minister and touch someone\'s heart.',
     },
     {
-      name: "John Mutua",
-      voicePart: "Bass",
-      imageUrl: "/images/member-4.jpg",
+      name: 'John Mutua',
+      voicePart: 'Bass',
+      imageUrl: '/images/member-4.jpg',
       yearsWithGroup: 3,
-      testimony: "The foundation of our music comes from the foundation of our faith."
-    }
+      testimony: 'The foundation of our music comes from the foundation of our faith.',
+    },
   ];
 
   const displayMembers = members.length > 0 ? members : sampleMembers;
+  const maxSteps = displayMembers.length;
 
-  const voicePartColors = {
-    'Lead': 'text-gold',
-    'Tenor': 'text-blue-400',
-    'Baritone': 'text-green-400',
-    'Bass': 'text-red-400'
+  const handleNext = () => {
+    setActiveStep((prevStep) => (prevStep + 1) % maxSteps);
   };
 
-  const nextMember = () => {
-    setCurrentIndex((prev) => (prev + 1) % displayMembers.length);
+  const handleBack = () => {
+    setActiveStep((prevStep) => (prevStep - 1 + maxSteps) % maxSteps);
   };
 
-  const prevMember = () => {
-    setCurrentIndex((prev) => (prev - 1 + displayMembers.length) % displayMembers.length);
+  const voicePartColors: Record<string, string> = {
+    Lead: colors.voiceParts.lead,
+    Tenor: colors.voiceParts.tenor,
+    Baritone: colors.voiceParts.baritone,
+    Bass: colors.voiceParts.bass,
   };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('');
+  };
+
+  const MemberCard = ({ member, index }: { member: typeof sampleMembers[0]; index: number }) => (
+    <motion.div variants={fadeInUp}>
+      <Card
+        sx={{
+          height: '100%',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'visible',
+        }}
+      >
+        <CardContent sx={{ pt: 5, pb: 4 }}>
+          {/* Avatar */}
+          <Avatar
+            src={member.imageUrl}
+            alt={member.name}
+            sx={{
+              width: { xs: 100, md: 120 },
+              height: { xs: 100, md: 120 },
+              mx: 'auto',
+              mb: 3,
+              border: 3,
+              borderColor: voicePartColors[member.voicePart] || 'primary.main',
+              fontSize: '2rem',
+              backgroundColor: voicePartColors[member.voicePart] || 'primary.main',
+            }}
+          >
+            {getInitials(member.name)}
+          </Avatar>
+
+          {/* Name */}
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              mb: 1,
+            }}
+          >
+            {member.name}
+          </Typography>
+
+          {/* Voice Part Chip */}
+          <Chip
+            label={member.voicePart}
+            size="small"
+            sx={{
+              backgroundColor: `${voicePartColors[member.voicePart]}20`,
+              color: voicePartColors[member.voicePart],
+              fontWeight: 600,
+              mb: 2,
+            }}
+          />
+
+          {/* Years */}
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              mb: 3,
+            }}
+          >
+            {member.yearsWithGroup} years with the group
+          </Typography>
+
+          {/* Testimony */}
+          {member.testimony && (
+            <Box
+              sx={{
+                position: 'relative',
+                px: 2,
+              }}
+            >
+              <QuoteIcon
+                sx={{
+                  position: 'absolute',
+                  top: -10,
+                  left: 0,
+                  fontSize: 24,
+                  color: 'primary.main',
+                  opacity: 0.5,
+                }}
+              />
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                  fontStyle: 'italic',
+                  lineHeight: 1.7,
+                }}
+              >
+                "{member.testimony}"
+              </Typography>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 
   return (
-    <section id="members" className="section-padding bg-gray-900">
-      <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Meet Our <span className="text-gold">Members</span>
-          </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Each voice brings a unique gift to our ministry, creating the harmony 
-            that defines The Light Acapella's sound and spirit.
-          </p>
-        </div>
+    <Box
+      id="members"
+      component="section"
+      sx={{
+        py: { xs: 8, md: 12 },
+        backgroundColor: 'background.paper',
+      }}
+    >
+      <Container maxWidth="lg">
+        {/* Section Header */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+        >
+          <motion.div variants={fadeInUp}>
+            <Typography
+              variant="h2"
+              align="center"
+              sx={{
+                mb: 2,
+                fontSize: { xs: '2rem', md: '3rem' },
+              }}
+            >
+              Meet Our{' '}
+              <Box component="span" sx={{ color: 'primary.main' }}>
+                Members
+              </Box>
+            </Typography>
+          </motion.div>
+
+          <motion.div variants={fadeInUp}>
+            <Typography
+              variant="h6"
+              align="center"
+              sx={{
+                color: 'text.secondary',
+                maxWidth: 700,
+                mx: 'auto',
+                mb: 8,
+                fontWeight: 400,
+              }}
+            >
+              Each voice brings a unique gift to our ministry, creating the harmony that defines The
+              Light Acapella's sound and spirit.
+            </Typography>
+          </motion.div>
+        </motion.div>
 
         {/* Desktop Grid View */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {displayMembers.map((member, index) => (
-            <div key={index} className="card text-center fade-in">
-              <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gray-700">
-                <img 
-                  src={member.imageUrl} 
-                  alt={member.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback to initials if image fails to load
-                    e.currentTarget.style.display = 'none';
-                    const initials = member.name.split(' ').map(n => n[0]).join('');
-                    e.currentTarget.parentElement!.innerHTML = `
-                      <div class="w-full h-full bg-gold flex items-center justify-center text-black text-2xl font-bold">
-                        ${initials}
-                      </div>
-                    `;
-                  }}
-                />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-white">{member.name}</h3>
-              <p className={`text-lg font-semibold mb-2 ${voicePartColors[member.voicePart as keyof typeof voicePartColors] || 'text-gold'}`}>
-                {member.voicePart}
-              </p>
-              <p className="text-sm text-gray-400 mb-3">
-                {member.yearsWithGroup} years with the group
-              </p>
-              {member.testimony && (
-                <p className="text-sm text-gray-300 italic">
-                  "{member.testimony}"
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+        {!isMobile && (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
+            <Grid container spacing={4}>
+              {displayMembers.map((member, index) => (
+                <Grid item xs={12} sm={6} lg={3} key={index}>
+                  <MemberCard member={member} index={index} />
+                </Grid>
+              ))}
+            </Grid>
+          </motion.div>
+        )}
 
         {/* Mobile Carousel View */}
-        <div className="md:hidden">
-          <div className="relative">
-            <div className="card text-center max-w-sm mx-auto">
-              <div className="w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden bg-gray-700">
-                <img 
-                  src={displayMembers[currentIndex].imageUrl} 
-                  alt={displayMembers[currentIndex].name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const initials = displayMembers[currentIndex].name.split(' ').map(n => n[0]).join('');
-                    e.currentTarget.parentElement!.innerHTML = `
-                      <div class="w-full h-full bg-gold flex items-center justify-center text-black text-3xl font-bold">
-                        ${initials}
-                      </div>
-                    `;
-                  }}
-                />
-              </div>
-              <h3 className="text-2xl font-bold mb-3 text-white">
-                {displayMembers[currentIndex].name}
-              </h3>
-              <p className={`text-xl font-semibold mb-3 ${voicePartColors[displayMembers[currentIndex].voicePart as keyof typeof voicePartColors] || 'text-gold'}`}>
-                {displayMembers[currentIndex].voicePart}
-              </p>
-              <p className="text-gray-400 mb-4">
-                {displayMembers[currentIndex].yearsWithGroup} years with the group
-              </p>
-              {displayMembers[currentIndex].testimony && (
-                <p className="text-gray-300 italic">
-                  "{displayMembers[currentIndex].testimony}"
-                </p>
-              )}
-            </div>
+        {isMobile && (
+          <Box sx={{ position: 'relative' }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeStep}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Box sx={{ maxWidth: 350, mx: 'auto' }}>
+                  <MemberCard member={displayMembers[activeStep]} index={activeStep} />
+                </Box>
+              </motion.div>
+            </AnimatePresence>
 
             {/* Navigation Buttons */}
-            <button 
-              onClick={prevMember}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-gold text-black p-3 rounded-full hover:bg-yellow-400 transition-colors"
+            <IconButton
+              onClick={handleBack}
+              sx={{
+                position: 'absolute',
+                left: { xs: -8, sm: 0 },
+                top: '50%',
+                transform: 'translateY(-50%)',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+              }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button 
-              onClick={nextMember}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-gold text-black p-3 rounded-full hover:bg-yellow-400 transition-colors"
+              <KeyboardArrowLeft />
+            </IconButton>
+            <IconButton
+              onClick={handleNext}
+              sx={{
+                position: 'absolute',
+                right: { xs: -8, sm: 0 },
+                top: '50%',
+                transform: 'translateY(-50%)',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+              }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+              <KeyboardArrowRight />
+            </IconButton>
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {displayMembers.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentIndex ? 'bg-gold' : 'bg-gray-600'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+            {/* Stepper Dots */}
+            <MobileStepper
+              steps={maxSteps}
+              position="static"
+              activeStep={activeStep}
+              sx={{
+                backgroundColor: 'transparent',
+                justifyContent: 'center',
+                mt: 4,
+                '& .MuiMobileStepper-dot': {
+                  backgroundColor: 'text.secondary',
+                  opacity: 0.3,
+                },
+                '& .MuiMobileStepper-dotActive': {
+                  backgroundColor: 'primary.main',
+                  opacity: 1,
+                },
+              }}
+              nextButton={<Box />}
+              backButton={<Box />}
+            />
+          </Box>
+        )}
 
         {/* Voice Parts Legend */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold mb-8 text-white">Voice Parts</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            <div className="text-center">
-              <div className="w-4 h-4 bg-yellow-400 rounded-full mx-auto mb-2"></div>
-              <p className="font-semibold text-gold">Lead</p>
-              <p className="text-sm text-gray-400">Melody & Harmony Lead</p>
-            </div>
-            <div className="text-center">
-              <div className="w-4 h-4 bg-blue-400 rounded-full mx-auto mb-2"></div>
-              <p className="font-semibold text-blue-400">Tenor</p>
-              <p className="text-sm text-gray-400">High Harmony</p>
-            </div>
-            <div className="text-center">
-              <div className="w-4 h-4 bg-green-400 rounded-full mx-auto mb-2"></div>
-              <p className="font-semibold text-green-400">Baritone</p>
-              <p className="text-sm text-gray-400">Mid-Range Harmony</p>
-            </div>
-            <div className="text-center">
-              <div className="w-4 h-4 bg-red-400 rounded-full mx-auto mb-2"></div>
-              <p className="font-semibold text-red-400">Bass</p>
-              <p className="text-sm text-gray-400">Foundation & Rhythm</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Box sx={{ mt: 10 }}>
+            <Typography
+              variant="h5"
+              align="center"
+              sx={{
+                mb: 4,
+                fontWeight: 600,
+              }}
+            >
+              Voice Parts
+            </Typography>
+            <Grid container spacing={3} justifyContent="center">
+              {[
+                { part: 'Lead', color: colors.voiceParts.lead, desc: 'Melody & Harmony Lead' },
+                { part: 'Tenor', color: colors.voiceParts.tenor, desc: 'High Harmony' },
+                { part: 'Baritone', color: colors.voiceParts.baritone, desc: 'Mid-Range Harmony' },
+                { part: 'Bass', color: colors.voiceParts.bass, desc: 'Foundation & Rhythm' },
+              ].map((item) => (
+                <Grid item xs={6} sm={3} key={item.part}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: '50%',
+                        backgroundColor: item.color,
+                        mx: 'auto',
+                        mb: 1,
+                      }}
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 600,
+                        color: item.color,
+                      }}
+                    >
+                      {item.part}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: 'text.secondary',
+                      }}
+                    >
+                      {item.desc}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </motion.div>
+      </Container>
+    </Box>
   );
 };
 
