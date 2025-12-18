@@ -24,6 +24,7 @@ const colors = {
     tenor: '#60A5FA',
     baritone: '#4ADE80',
     bass: '#F87171',
+    soprano: '#F472B6',
   },
   eventTypes: {
     church: '#3B82F6',

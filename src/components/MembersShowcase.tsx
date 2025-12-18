@@ -30,35 +30,49 @@ const MembersShowcase: React.FC = () => {
   const members = useQuery(api.members.list) || [];
   const [activeStep, setActiveStep] = useState(0);
 
-  // Sample member data for demonstration
+  // The Light Acapella members
   const sampleMembers = [
     {
-      name: 'David Mwangi',
+      name: 'Davis Rogoncho',
       voicePart: 'Lead',
-      imageUrl: '/images/member-1.jpg',
+      imageUrl: '/images/dav-ron.jpg',
       yearsWithGroup: 5,
       testimony: 'Music has been my way of connecting with God and sharing His love with others.',
     },
     {
-      name: 'Samuel Kiprotich',
+      name: 'Ken Ogetii',
       voicePart: 'Tenor',
-      imageUrl: '/images/member-2.jpg',
+      imageUrl: '/images/ken-1.jpg',
       yearsWithGroup: 4,
       testimony: 'Through a cappella, I\'ve learned that harmony in music reflects harmony in life.',
     },
     {
-      name: 'Peter Ochieng',
+      name: 'Ken',
       voicePart: 'Baritone',
-      imageUrl: '/images/member-3.jpg',
+      imageUrl: '/images/ken-2.jpg',
       yearsWithGroup: 6,
       testimony: 'Every performance is an opportunity to minister and touch someone\'s heart.',
     },
     {
-      name: 'John Mutua',
-      voicePart: 'Bass',
-      imageUrl: '/images/member-4.jpg',
+      name: 'Sydney',
+      voicePart: 'Soprano',
+      imageUrl: '/images/sydney.jpg',
       yearsWithGroup: 3,
       testimony: 'The foundation of our music comes from the foundation of our faith.',
+    },
+    {
+      name: 'Tenor Guy',
+      voicePart: 'Tenor',
+      imageUrl: '/images/tenor-guy.jpg',
+      yearsWithGroup: 2,
+      testimony: 'Singing praises lifts the soul and brings us closer to heaven.',
+    },
+    {
+      name: 'Bass Man',
+      voicePart: 'Bass',
+      imageUrl: '/images/bass-man.jpg',
+      yearsWithGroup: 4,
+      testimony: 'The deep notes carry the weight of our worship and anchor our harmonies.',
     },
   ];
 
@@ -78,6 +92,7 @@ const MembersShowcase: React.FC = () => {
     Tenor: colors.voiceParts.tenor,
     Baritone: colors.voiceParts.baritone,
     Bass: colors.voiceParts.bass,
+    Soprano: colors.voiceParts.soprano,
   };
 
   const getInitials = (name: string) => {
@@ -238,20 +253,13 @@ const MembersShowcase: React.FC = () => {
 
         {/* Desktop Grid View */}
         {!isMobile && (
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-          >
-            <Grid container spacing={4}>
-              {displayMembers.map((member, index) => (
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
-                  <MemberCard member={member} index={index} />
-                </Grid>
-              ))}
-            </Grid>
-          </motion.div>
+          <Grid container spacing={4}>
+            {displayMembers.map((member, index) => (
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+                <MemberCard member={member} index={index} />
+              </Grid>
+            ))}
+          </Grid>
         )}
 
         {/* Mobile Carousel View */}
@@ -350,6 +358,7 @@ const MembersShowcase: React.FC = () => {
             <Grid container spacing={3} justifyContent="center">
               {[
                 { part: 'Lead', color: colors.voiceParts.lead, desc: 'Melody & Harmony Lead' },
+                { part: 'Soprano', color: colors.voiceParts.soprano, desc: 'Highest Voice' },
                 { part: 'Tenor', color: colors.voiceParts.tenor, desc: 'High Harmony' },
                 { part: 'Baritone', color: colors.voiceParts.baritone, desc: 'Mid-Range Harmony' },
                 { part: 'Bass', color: colors.voiceParts.bass, desc: 'Foundation & Rhythm' },
