@@ -90,21 +90,39 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
   const livePerformances = [
     {
       id: 'live-1',
-      title: 'Sunday Morning Worship - Syokimau Central SDA',
-      youtubeId: 'dQw4w9WgXcQ',
-      description: 'Live performance during Sunday morning service',
+      title: 'The Light Acapella - Live Performance 1',
+      youtubeId: 'Ixmi0Zc94GA',
+      description: 'Live a cappella performance by The Light Acapella',
     },
     {
       id: 'live-2',
-      title: 'Youth Conference 2023',
-      youtubeId: 'dQw4w9WgXcQ',
-      description: 'Special performance at the annual youth conference',
+      title: 'The Light Acapella - Live Performance 2',
+      youtubeId: 'EL4zjOnUo7U',
+      description: 'Live a cappella performance by The Light Acapella',
     },
     {
       id: 'live-3',
-      title: 'Wedding Performance - Nairobi',
-      youtubeId: 'dQw4w9WgXcQ',
-      description: 'Surprise performance at a beautiful wedding ceremony',
+      title: 'The Light Acapella - Live Performance 3',
+      youtubeId: '-hRG7BD9N28',
+      description: 'Live a cappella performance by The Light Acapella',
+    },
+    {
+      id: 'live-4',
+      title: 'The Light Acapella - Live Performance 4',
+      youtubeId: 'gIcQZp3UKU8',
+      description: 'Live a cappella performance by The Light Acapella',
+    },
+    {
+      id: 'live-5',
+      title: 'The Light Acapella - Live Performance 5',
+      youtubeId: 'cHP95uAP8yk',
+      description: 'Live a cappella performance by The Light Acapella',
+    },
+    {
+      id: 'live-6',
+      title: 'The Light Acapella - Live Performance 6',
+      youtubeId: 'bh4JQvGvKC4',
+      description: 'Live a cappella performance by The Light Acapella',
     },
   ];
 
