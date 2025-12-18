@@ -291,6 +291,11 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   onClick={() => onOpenModal('donation')}
                   sx={{
                     px: 3,
+                    backgroundColor: '#00A859', // M-Pesa green
+                    color: '#FFFFFF',
+                    '&:hover': {
+                      backgroundColor: '#008A4A', // Darker green on hover
+                    },
                   }}
                 >
                   Donate

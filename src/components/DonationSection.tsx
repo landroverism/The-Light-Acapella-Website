@@ -187,12 +187,21 @@ const DonationSection: React.FC<DonationSectionProps> = ({ onClose }) => {
             py: 1.5,
             fontSize: '1.1rem',
             mb: 3,
+            backgroundColor: '#00A859', // M-Pesa green
+            color: '#FFFFFF',
+            '&:hover': {
+              backgroundColor: '#008A4A', // Darker green on hover
+            },
+            '&:disabled': {
+              backgroundColor: '#00A859',
+              opacity: 0.6,
+            },
           }}
         >
           {isSubmitting ? (
-            <CircularProgress size={24} sx={{ color: 'primary.contrastText' }} />
+            <CircularProgress size={24} sx={{ color: '#FFFFFF' }} />
           ) : (
-            `Donate KES ${amount ? parseInt(amount).toLocaleString() : '0'}`
+            `Mpesa Xpress KES ${amount ? parseInt(amount).toLocaleString() : '0'}`
           )}
         </Button>
 
