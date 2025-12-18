@@ -205,6 +205,20 @@ const DonationSection: React.FC<DonationSectionProps> = ({ onClose }) => {
           )}
         </Button>
 
+        {/* M-Pesa Security Text */}
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{
+            color: 'text.secondary',
+            fontSize: '0.85rem',
+            mb: 3,
+            fontStyle: 'italic',
+          }}
+        >
+          Click to pay securely via M-Pesa STK Push
+        </Typography>
+
         {/* Benefits List */}
         <Paper
           elevation={0}
