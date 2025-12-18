@@ -217,11 +217,10 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   sx={{
                     fontFamily: '"Dancing Script", cursive',
                     color: 'primary.main',
-                    fontSize: { xs: '1rem', md: trigger ? '1.2rem' : '1.4rem' },
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: trigger ? '1.2rem' : '1.4rem' },
                     transform: 'rotate(-3deg)',
                     transition: 'font-size 0.3s ease',
                     textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
-                    display: { xs: 'none', sm: 'block' },
                   }}
                 >
                   The Light Acapella

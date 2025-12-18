@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -6,13 +6,12 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions,
   Button,
   Chip,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  Collapse,
+  IconButton,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Church as ChurchIcon,
@@ -21,11 +20,11 @@ import {
   Stadium as StadiumIcon,
   Restaurant as DinnerIcon,
   FlashOn as FlashIcon,
-  Circle as CircleIcon,
+  ExpandMore as ExpandMoreIcon,
   ArrowForward as ArrowIcon,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { fadeInUp, staggerContainer, staggerContainerSlow } from '../utils/motion';
+import { fadeInUp, staggerContainer } from '../utils/motion';
 
 interface ServicesOfferedProps {
   onOpenModal: (modal: string) => void;
@@ -33,68 +32,330 @@ interface ServicesOfferedProps {
 
 const services = [
   {
-    title: 'Wedding Surprise Performances',
-    duration: '15-60 minutes',
+    title: 'Wedding Performances',
+    shortTitle: 'Weddings',
+    duration: '15-60 min',
     description:
       'Create unforgettable moments with surprise a cappella performances during your wedding ceremony or reception.',
-    idealFor: ['Wedding Ceremonies', 'Reception Entrances', 'First Dance Accompaniment'],
+    idealFor: ['Wedding Ceremonies', 'Reception Entrances', 'First Dance'],
     icon: CelebrationIcon,
     gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
   },
   {
-    title: 'Corporate & Private Events',
-    duration: '30-90 minutes',
+    title: 'Corporate & Private',
+    shortTitle: 'Corporate',
+    duration: '30-90 min',
     description:
       'Professional performances for corporate gatherings, private celebrations, and special occasions.',
-    idealFor: ['Corporate Dinners', 'Anniversary Celebrations', 'Private Parties'],
+    idealFor: ['Corporate Dinners', 'Anniversaries', 'Private Parties'],
     icon: MusicIcon,
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   },
   {
-    title: 'Church & Religious Services',
-    duration: '20-45 minutes',
+    title: 'Church Services',
+    shortTitle: 'Church',
+    duration: '20-45 min',
     description:
-      'Uplifting worship experiences through a cappella ministry music for church services and religious gatherings.',
-    idealFor: ['Sunday Services', 'Revival Meetings', 'Prayer Conferences'],
+      'Uplifting worship experiences through a cappella ministry music for church services.',
+    idealFor: ['Sunday Services', 'Revival Meetings', 'Conferences'],
     icon: ChurchIcon,
     gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
   },
   {
-    title: 'Outdoor & Sports Events',
-    duration: '10-30 minutes',
+    title: 'Outdoor Events',
+    shortTitle: 'Outdoor',
+    duration: '10-30 min',
     description:
-      'Dynamic performances for outdoor events, sports gatherings, and community celebrations without amplification needs.',
-    idealFor: ['Sports Events', 'Community Gatherings', 'Outdoor Festivals'],
+      'Dynamic performances for outdoor events and community celebrations.',
+    idealFor: ['Sports Events', 'Community Gatherings', 'Festivals'],
     icon: StadiumIcon,
     gradient: 'linear-gradient(135deg, #ee0979 0%, #ff6a00 100%)',
   },
   {
-    title: 'Intimate Dinner Performances',
-    duration: '45-75 minutes',
+    title: 'Dinner Performances',
+    shortTitle: 'Dinners',
+    duration: '45-75 min',
     description:
-      'Elegant background and featured performances for intimate dining experiences and special occasions.',
-    idealFor: ['Anniversary Dinners', 'Proposal Events', 'VIP Gatherings'],
+      'Elegant performances for intimate dining experiences and special occasions.',
+    idealFor: ['Anniversary Dinners', 'Proposals', 'VIP Gatherings'],
     icon: DinnerIcon,
     gradient: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
   },
   {
-    title: 'Flash Mob Performances',
-    duration: '5-15 minutes',
+    title: 'Flash Mob',
+    shortTitle: 'Flash Mob',
+    duration: '5-15 min',
     description:
-      'Surprise flash mob performances that create viral moments and unforgettable experiences for your guests.',
-    idealFor: ['Public Proposals', 'Birthday Surprises', 'Marketing Events'],
+      'Surprise flash mob performances that create viral moments and unforgettable experiences.',
+    idealFor: ['Public Proposals', 'Birthdays', 'Marketing Events'],
     icon: FlashIcon,
     gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
   },
 ];
 
+// Mobile compact card component
+const MobileServiceCard: React.FC<{
+  service: typeof services[0];
+  onOpenModal: (modal: string) => void;
+}> = ({ service, onOpenModal }) => {
+  const [expanded, setExpanded] = useState(false);
+  const IconComponent = service.icon;
+
+  return (
+    <Card
+      sx={{
+        position: 'relative',
+        overflow: 'visible',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: 4,
+          height: '100%',
+          background: service.gradient,
+          borderRadius: '16px 0 0 16px',
+        },
+      }}
+    >
+      <CardContent sx={{ py: 2, pl: 3 }}>
+        {/* Header Row */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 2,
+                background: service.gradient,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <IconComponent sx={{ fontSize: 22, color: 'white' }} />
+            </Box>
+            <Box>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontWeight: 600,
+                  color: 'text.primary',
+                  lineHeight: 1.2,
+                }}
+              >
+                {service.shortTitle}
+              </Typography>
+              <Chip
+                label={service.duration}
+                size="small"
+                sx={{
+                  height: 20,
+                  fontSize: '0.7rem',
+                  backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                  color: 'primary.main',
+                }}
+              />
+            </Box>
+          </Box>
+          <IconButton
+            onClick={() => setExpanded(!expanded)}
+            sx={{
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s',
+              color: 'primary.main',
+            }}
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        </Box>
+
+        {/* Expandable Content */}
+        <Collapse in={expanded}>
+          <Box sx={{ mt: 2 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                mb: 2,
+                lineHeight: 1.6,
+              }}
+            >
+              {service.description}
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+              {service.idealFor.map((item, idx) => (
+                <Chip
+                  key={idx}
+                  label={item}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    fontSize: '0.7rem',
+                    height: 24,
+                    borderColor: 'divider',
+                    color: 'text.secondary',
+                  }}
+                />
+              ))}
+            </Box>
+            <Button
+              size="small"
+              onClick={() => onOpenModal('quotation')}
+              endIcon={<ArrowIcon sx={{ fontSize: 16 }} />}
+              sx={{
+                color: 'primary.main',
+                fontWeight: 600,
+                p: 0,
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                },
+              }}
+            >
+              Get Quote
+            </Button>
+          </Box>
+        </Collapse>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Desktop card component
+const DesktopServiceCard: React.FC<{
+  service: typeof services[0];
+  onOpenModal: (modal: string) => void;
+}> = ({ service, onOpenModal }) => {
+  const IconComponent = service.icon;
+
+  return (
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        overflow: 'visible',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 4,
+          background: service.gradient,
+          borderRadius: '16px 16px 0 0',
+        },
+      }}
+    >
+      <CardContent sx={{ flex: 1, pt: 4 }}>
+        {/* Icon */}
+        <Box
+          sx={{
+            width: 56,
+            height: 56,
+            borderRadius: 3,
+            background: service.gradient,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mb: 2,
+          }}
+        >
+          <IconComponent sx={{ fontSize: 28, color: 'white' }} />
+        </Box>
+
+        {/* Title */}
+        <Typography
+          variant="h6"
+          sx={{
+            mb: 1,
+            fontWeight: 600,
+            color: 'primary.main',
+          }}
+        >
+          {service.title}
+        </Typography>
+
+        {/* Duration Chip */}
+        <Chip
+          label={service.duration}
+          size="small"
+          sx={{
+            mb: 2,
+            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+            color: 'primary.main',
+            fontWeight: 500,
+          }}
+        />
+
+        {/* Description */}
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+            mb: 2,
+            lineHeight: 1.6,
+          }}
+        >
+          {service.description}
+        </Typography>
+
+        {/* Ideal For Tags */}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          {service.idealFor.map((item, idx) => (
+            <Chip
+              key={idx}
+              label={item}
+              size="small"
+              variant="outlined"
+              sx={{
+                fontSize: '0.7rem',
+                height: 24,
+                borderColor: 'divider',
+                color: 'text.secondary',
+              }}
+            />
+          ))}
+        </Box>
+      </CardContent>
+
+      <Box sx={{ px: 3, pb: 2 }}>
+        <Button
+          onClick={() => onOpenModal('quotation')}
+          endIcon={<ArrowIcon />}
+          sx={{
+            color: 'primary.main',
+            fontWeight: 600,
+            '&:hover': {
+              backgroundColor: 'rgba(255, 215, 0, 0.08)',
+            },
+          }}
+        >
+          Request Quote
+        </Button>
+      </Box>
+    </Card>
+  );
+};
+
 const ServicesOffered: React.FC<ServicesOfferedProps> = ({ onOpenModal }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <Box
       id="services"
       component="section"
       sx={{
-        py: { xs: 8, md: 12 },
+        py: { xs: 6, md: 12 },
         backgroundColor: 'background.paper',
       }}
     >
@@ -111,8 +372,8 @@ const ServicesOffered: React.FC<ServicesOfferedProps> = ({ onOpenModal }) => {
               variant="h2"
               align="center"
               sx={{
-                mb: 2,
-                fontSize: { xs: '2rem', md: '3rem' },
+                mb: 1,
+                fontSize: { xs: '1.75rem', md: '3rem' },
               }}
             >
               Our{' '}
@@ -124,190 +385,83 @@ const ServicesOffered: React.FC<ServicesOfferedProps> = ({ onOpenModal }) => {
 
           <motion.div variants={fadeInUp}>
             <Typography
-              variant="h6"
+              variant="body1"
               align="center"
               sx={{
                 color: 'text.secondary',
-                maxWidth: 700,
+                maxWidth: 600,
                 mx: 'auto',
-                mb: 8,
-                fontWeight: 400,
+                mb: { xs: 4, md: 8 },
+                fontSize: { xs: '0.9rem', md: '1.1rem' },
               }}
             >
               From intimate gatherings to grand celebrations, we bring the power of a cappella music
-              to touch hearts and create lasting memories at your special events.
+              to your special events.
             </Typography>
           </motion.div>
         </motion.div>
 
-        {/* Services Grid */}
-        <motion.div
-          variants={staggerContainerSlow}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-        >
-          <Grid container spacing={4}>
-            {services.map((service, index) => {
-              const IconComponent = service.icon;
-              return (
-                <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
-                  <motion.div variants={fadeInUp}>
-                    <Card
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        position: 'relative',
-                        overflow: 'visible',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          height: 4,
-                          background: service.gradient,
-                          borderRadius: '16px 16px 0 0',
-                        },
-                      }}
-                    >
-                      <CardContent sx={{ flex: 1, pt: 4 }}>
-                        {/* Icon */}
-                        <Box
-                          sx={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 3,
-                            background: service.gradient,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            mb: 3,
-                          }}
-                        >
-                          <IconComponent sx={{ fontSize: 32, color: 'white' }} />
-                        </Box>
+        {/* Services - Mobile View (Compact Expandable Cards) */}
+        {isMobile && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {services.map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <MobileServiceCard service={service} onOpenModal={onOpenModal} />
+              </motion.div>
+            ))}
+          </Box>
+        )}
 
-                        {/* Title */}
-                        <Typography
-                          variant="h5"
-                          sx={{
-                            mb: 1,
-                            fontWeight: 600,
-                            color: 'primary.main',
-                          }}
-                        >
-                          {service.title}
-                        </Typography>
-
-                        {/* Duration Chip */}
-                        <Chip
-                          label={`Duration: ${service.duration}`}
-                          size="small"
-                          sx={{
-                            mb: 2,
-                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                            color: 'primary.main',
-                            fontWeight: 500,
-                          }}
-                        />
-
-                        {/* Description */}
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: 'text.secondary',
-                            mb: 3,
-                            lineHeight: 1.7,
-                          }}
-                        >
-                          {service.description}
-                        </Typography>
-
-                        {/* Ideal For List */}
-                        <Typography
-                          variant="subtitle2"
-                          sx={{
-                            color: 'text.primary',
-                            mb: 1,
-                            fontWeight: 600,
-                          }}
-                        >
-                          Perfect for:
-                        </Typography>
-                        <List dense disablePadding>
-                          {service.idealFor.map((item, idx) => (
-                            <ListItem key={idx} disablePadding sx={{ py: 0.25 }}>
-                              <ListItemIcon sx={{ minWidth: 24 }}>
-                                <CircleIcon
-                                  sx={{
-                                    fontSize: 8,
-                                    color: 'primary.main',
-                                  }}
-                                />
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={item}
-                                primaryTypographyProps={{
-                                  variant: 'body2',
-                                  color: 'text.secondary',
-                                }}
-                              />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </CardContent>
-
-                      <CardActions sx={{ px: 3, pb: 3 }}>
-                        <Button
-                          onClick={() => onOpenModal('quotation')}
-                          endIcon={<ArrowIcon />}
-                          sx={{
-                            color: 'primary.main',
-                            fontWeight: 600,
-                            '&:hover': {
-                              backgroundColor: 'rgba(255, 215, 0, 0.08)',
-                            },
-                          }}
-                        >
-                          Request Quote
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </motion.div>
-                </Grid>
-              );
-            })}
+        {/* Services - Desktop View (Grid Cards) */}
+        {!isMobile && (
+          <Grid container spacing={3}>
+            {services.map((service, index) => (
+              <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                >
+                  <DesktopServiceCard service={service} onOpenModal={onOpenModal} />
+                </motion.div>
+              </Grid>
+            ))}
           </Grid>
-        </motion.div>
+        )}
 
         {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Box sx={{ textAlign: 'center', mt: 10 }}>
+          <Box sx={{ textAlign: 'center', mt: { xs: 5, md: 10 } }}>
             <Typography
-              variant="h6"
+              variant="body1"
               sx={{
                 color: 'text.secondary',
-                mb: 4,
-                fontWeight: 400,
+                mb: 3,
+                fontSize: { xs: '0.9rem', md: '1rem' },
               }}
             >
-              Don't see your event type? We're flexible and love creating custom experiences.
+              Don't see your event type? We love creating custom experiences.
             </Typography>
             <Button
               variant="contained"
               size="large"
               onClick={() => onOpenModal('quotation')}
               sx={{
-                px: 5,
+                px: { xs: 4, md: 5 },
                 py: 1.5,
-                fontSize: '1.1rem',
+                fontSize: { xs: '1rem', md: '1.1rem' },
               }}
             >
               Get Custom Quote
