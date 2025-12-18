@@ -104,7 +104,7 @@ const BookingCTA: React.FC<BookingCTAProps> = ({ onOpenModal }) => {
               {features.map((feature, index) => {
                 const IconComponent = feature.icon;
                 return (
-                  <Grid item xs={12} md={4} key={index}>
+                  <Grid size={{ xs: 12, md: 4 }} key={index}>
                     <Box
                       sx={{
                         textAlign: 'center',

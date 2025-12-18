@@ -151,7 +151,7 @@ const ServicesOffered: React.FC<ServicesOfferedProps> = ({ onOpenModal }) => {
             {services.map((service, index) => {
               const IconComponent = service.icon;
               return (
-                <Grid item xs={12} md={6} lg={4} key={index}>
+                <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
                   <motion.div variants={fadeInUp}>
                     <Card
                       sx={{

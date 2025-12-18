@@ -176,7 +176,7 @@ const UpcomingEvents: React.FC = () => {
           >
             <Grid container spacing={4}>
               {upcomingEvents.map((event, index) => (
-                <Grid item xs={12} md={6} key={index}>
+                <Grid size={{ xs: 12, md: 6 }} key={index}>
                   <motion.div variants={fadeInUp}>
                     <Card
                       sx={{

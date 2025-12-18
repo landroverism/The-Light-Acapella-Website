@@ -87,7 +87,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
       <Stack spacing={3}>
         {/* Personal Information */}
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="Full Name"
@@ -97,7 +97,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               required
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="Phone Number"
@@ -122,7 +122,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
 
         {/* Event Details */}
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               select
@@ -139,7 +139,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="Event Date"
@@ -164,7 +164,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
         />
 
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="Expected Guest Count"
@@ -174,7 +174,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               placeholder="e.g., 50-100 guests"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               select

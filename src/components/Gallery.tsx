@@ -237,7 +237,7 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
         <TabPanel value={activeTab} index={0}>
           <Grid container spacing={3}>
             {musicSongs.map((song) => (
-              <Grid item xs={12} md={6} key={song.id}>
+              <Grid size={{ xs: 12, md: 6 }} key={song.id}>
                 <Card>
                   <CardContent>
                     <AudioPlayer
@@ -267,7 +267,7 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
         <TabPanel value={activeTab} index={1}>
           <Grid container spacing={3}>
             {livePerformances.map((video) => (
-              <Grid item xs={12} md={6} key={video.id}>
+              <Grid size={{ xs: 12, md: 6 }} key={video.id}>
                 <Card>
                   <CardContent>
                     <VideoEmbed youtubeId={video.youtubeId} title={video.title} />
@@ -300,7 +300,7 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
         <TabPanel value={activeTab} index={2}>
           <Grid container spacing={3}>
             {coverSongs.map((song) => (
-              <Grid item xs={12} md={6} key={song.id}>
+              <Grid size={{ xs: 12, md: 6 }} key={song.id}>
                 <Card>
                   <CardContent>
                     <AudioPlayer

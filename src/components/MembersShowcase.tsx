@@ -246,7 +246,7 @@ const MembersShowcase: React.FC = () => {
           >
             <Grid container spacing={4}>
               {displayMembers.map((member, index) => (
-                <Grid item xs={12} sm={6} lg={3} key={index}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
                   <MemberCard member={member} index={index} />
                 </Grid>
               ))}
@@ -354,7 +354,7 @@ const MembersShowcase: React.FC = () => {
                 { part: 'Baritone', color: colors.voiceParts.baritone, desc: 'Mid-Range Harmony' },
                 { part: 'Bass', color: colors.voiceParts.bass, desc: 'Foundation & Rhythm' },
               ].map((item) => (
-                <Grid item xs={6} sm={3} key={item.part}>
+                <Grid size={{ xs: 6, sm: 3 }} key={item.part}>
                   <Box sx={{ textAlign: 'center' }}>
                     <Box
                       sx={{
