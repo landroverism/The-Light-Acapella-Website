@@ -17,7 +17,6 @@ import {
   Divider,
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
   Close as CloseIcon,
   Home as HomeIcon,
   MusicNote as MusicNoteIcon,
@@ -310,9 +309,19 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
               sx={{
                 display: { md: 'none' },
                 color: 'text.primary',
+                p: 1.5,
               }}
             >
-              <MenuIcon />
+              <Box
+                component="img"
+                src="/images/menu.png"
+                alt="Menu"
+                sx={{
+                  width: { xs: 32, sm: 28 },
+                  height: { xs: 32, sm: 28 },
+                  objectFit: 'contain',
+                }}
+              />
             </IconButton>
           </Toolbar>
         </Container>

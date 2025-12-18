@@ -14,7 +14,6 @@ import {
 import {
   MusicNote as MusicIcon,
   Mic as MicIcon,
-  Favorite as FavoriteIcon,
   YouTube as YouTubeIcon,
   Instagram as InstagramIcon,
 } from '@mui/icons-material';
@@ -126,32 +125,6 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
     },
   ];
 
-  const coverSongs = [
-    {
-      id: 'cover-1',
-      title: 'Waymaker - Sinach',
-      duration: '4:15',
-      audioUrl: '/audio/waymaker.mp3',
-      originalArtist: 'Sinach',
-      description: 'Our a cappella arrangement of this contemporary gospel hit',
-    },
-    {
-      id: 'cover-2',
-      title: 'Goodness of God - Bethel Music',
-      duration: '5:02',
-      audioUrl: '/audio/goodness-of-god.mp3',
-      originalArtist: 'Bethel Music',
-      description: 'A heartfelt cover of this modern worship anthem',
-    },
-    {
-      id: 'cover-3',
-      title: 'What a Beautiful Name - Hillsong',
-      duration: '4:28',
-      audioUrl: '/audio/beautiful-name.mp3',
-      originalArtist: 'Hillsong Worship',
-      description: 'Our unique take on this powerful worship song',
-    },
-  ];
 
   return (
     <Box
@@ -198,8 +171,8 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
                 fontWeight: 400,
               }}
             >
-              Experience the power of a cappella worship through our original songs, live
-              performances, and gospel covers that touch hearts and change lives.
+              Experience the power of a cappella worship through our original songs and live
+              performances that touch hearts and change lives.
             </Typography>
           </motion.div>
         </motion.div>
@@ -239,12 +212,6 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
                 icon={<MicIcon />}
                 iconPosition="start"
                 label="Live Performances"
-                sx={{ gap: 1 }}
-              />
-              <Tab
-                icon={<FavoriteIcon />}
-                iconPosition="start"
-                label="Gospel Covers"
                 sx={{ gap: 1 }}
               />
             </Tabs>
@@ -315,47 +282,6 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
           </Grid>
         </TabPanel>
 
-        <TabPanel value={activeTab} index={2}>
-          <Grid container spacing={3}>
-            {coverSongs.map((song) => (
-              <Grid size={{ xs: 12, md: 6 }} key={song.id}>
-                <Card>
-                  <CardContent>
-                    <AudioPlayer
-                      song={song}
-                      currentlyPlaying={currentlyPlaying}
-                      setCurrentlyPlaying={setCurrentlyPlaying}
-                    />
-                    <Box sx={{ mt: 2 }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        Original by:{' '}
-                        <Box
-                          component="span"
-                          sx={{ color: 'primary.main', fontWeight: 500 }}
-                        >
-                          {song.originalArtist}
-                        </Box>
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: 'text.secondary',
-                          mt: 1,
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        {song.description}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </TabPanel>
 
         {/* Social Links CTA */}
         <motion.div
