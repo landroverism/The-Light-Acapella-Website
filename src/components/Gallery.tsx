@@ -55,7 +55,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 
 const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying }) => {
   const [activeTab, setActiveTab] = useState(0);
-  const songs = useQuery(api.songs.list) || [];
+  const songs = useQuery(api.songs.list);
+  const isLoadingSongs = songs === undefined;
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -85,6 +86,9 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
       description: 'An uplifting arrangement filled with hope',
     },
   ];
+
+  // Use Convex data if available, otherwise fall back to sample data
+  const displaySongs = songs && songs.length > 0 ? songs : musicSongs;
 
   const livePerformances = [
     {
@@ -221,7 +225,7 @@ const Gallery: React.FC<GalleryProps> = ({ currentlyPlaying, setCurrentlyPlaying
         {/* Tab Panels */}
         <TabPanel value={activeTab} index={0}>
           <Grid container spacing={3}>
-            {musicSongs.map((song) => (
+            {displaySongs.map((song) => (
               <Grid size={{ xs: 12, md: 6 }} key={song.id}>
                 <Card>
                   <CardContent>

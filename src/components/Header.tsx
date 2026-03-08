@@ -170,6 +170,7 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
   return (
     <>
       <AppBar
+        component="nav"
         position="fixed"
         elevation={trigger ? 4 : 0}
         sx={{
@@ -306,6 +307,8 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
             <IconButton
               edge="end"
               onClick={handleDrawerToggle}
+              aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileOpen}
               sx={{
                 display: { md: 'none' },
                 color: 'text.primary',
@@ -315,7 +318,7 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
               <Box
                 component="img"
                 src="/images/menu.png"
-                alt="Menu"
+                alt=""
                 sx={{
                   width: { xs: 32, sm: 28 },
                   height: { xs: 32, sm: 28 },
@@ -333,6 +336,7 @@ const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
         anchor="right"
         open={mobileOpen}
         onClose={handleDrawerToggle}
+        aria-label="Navigation menu"
         ModalProps={{
           keepMounted: true, // Better mobile performance
         }}

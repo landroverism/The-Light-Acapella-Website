@@ -19,6 +19,10 @@ interface QuotationRequestProps {
   onClose: () => void;
 }
 
+interface FormErrors {
+  [key: string]: string;
+}
+
 const eventTypes = [
   { value: 'wedding', label: 'Wedding' },
   { value: 'corporate', label: 'Corporate Event' },
@@ -36,6 +40,17 @@ const durationOptions = [
   { value: 'flexible', label: 'Flexible' },
 ];
 
+// Validation utilities
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validatePhone = (phone: string): boolean => {
+  const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
+  return phoneRegex.test(phone);
+};
+
 const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -51,6 +66,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
     specialRequests: '',
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createQuotation = useMutation(api.quotations.create);
 
@@ -63,10 +79,59 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
       [name]:
         type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full name is required';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.eventType) {
+      newErrors.eventType = 'Please select an event type';
+    }
+
+    if (!formData.eventDate) {
+      newErrors.eventDate = 'Event date is required';
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = 'Event location is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error('Please fill in all required fields correctly');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -76,6 +141,7 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
       );
       onClose();
     } catch (error) {
+      console.error('Failed to submit quotation:', error);
       toast.error('Failed to submit request. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -95,6 +161,8 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               value={formData.fullName}
               onChange={handleInputChange}
               required
+              error={!!errors.fullName}
+              helperText={errors.fullName}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -106,6 +174,8 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               value={formData.phone}
               onChange={handleInputChange}
               required
+              error={!!errors.phone}
+              helperText={errors.phone}
             />
           </Grid>
         </Grid>
@@ -118,6 +188,8 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
           value={formData.email}
           onChange={handleInputChange}
           required
+          error={!!errors.email}
+          helperText={errors.email}
         />
 
         {/* Event Details */}
@@ -131,7 +203,10 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               value={formData.eventType}
               onChange={handleInputChange}
               required
+              error={!!errors.eventType}
+              helperText={errors.eventType}
             >
+              <MenuItem value="">Select event type</MenuItem>
               {eventTypes.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
@@ -148,6 +223,8 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
               value={formData.eventDate}
               onChange={handleInputChange}
               required
+              error={!!errors.eventDate}
+              helperText={errors.eventDate}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
@@ -161,6 +238,8 @@ const QuotationRequest: React.FC<QuotationRequestProps> = ({ onClose }) => {
           onChange={handleInputChange}
           placeholder="Venue name and address"
           required
+          error={!!errors.location}
+          helperText={errors.location}
         />
 
         <Grid container spacing={2}>

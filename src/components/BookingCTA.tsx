@@ -105,46 +105,61 @@ const BookingCTA: React.FC<BookingCTAProps> = ({ onOpenModal }) => {
                 const IconComponent = feature.icon;
                 return (
                   <Grid size={{ xs: 12, md: 4 }} key={index}>
-                    <Box
-                      sx={{
-                        textAlign: 'center',
-                        p: 3,
-                      }}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -8 }}
                     >
                       <Box
                         sx={{
-                          width: 64,
-                          height: 64,
-                          borderRadius: '50%',
-                          backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          mx: 'auto',
-                          mb: 2,
+                          textAlign: 'center',
+                          p: 3,
+                          transition: 'all 0.3s ease',
                         }}
                       >
-                        <IconComponent sx={{ fontSize: 28, color: 'black' }} />
+                        <motion.div
+                          whileHover={{ scale: 1.1, rotate: 10 }}
+                          transition={{ type: 'spring', stiffness: 300 }}
+                        >
+                          <Box
+                            sx={{
+                              width: 64,
+                              height: 64,
+                              borderRadius: '50%',
+                              backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              mx: 'auto',
+                              mb: 2,
+                              transition: 'all 0.3s ease',
+                            }}
+                          >
+                            <IconComponent sx={{ fontSize: 28, color: 'black' }} />
+                          </Box>
+                        </motion.div>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: 'black',
+                            fontWeight: 600,
+                            mb: 1,
+                          }}
+                        >
+                          {feature.title}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: 'rgba(0, 0, 0, 0.7)',
+                          }}
+                        >
+                          {feature.description}
+                        </Typography>
                       </Box>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          color: 'black',
-                          fontWeight: 600,
-                          mb: 1,
-                        }}
-                      >
-                        {feature.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: 'rgba(0, 0, 0, 0.7)',
-                        }}
-                      >
-                        {feature.description}
-                      </Typography>
-                    </Box>
+                    </motion.div>
                   </Grid>
                 );
               })}
@@ -159,45 +174,61 @@ const BookingCTA: React.FC<BookingCTAProps> = ({ onOpenModal }) => {
               justifyContent="center"
               alignItems="center"
             >
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => onOpenModal('quotation')}
-                sx={{
-                  backgroundColor: 'black',
-                  color: 'primary.main',
-                  px: 5,
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                  },
-                  minWidth: { xs: '100%', sm: 'auto' },
-                }}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Get Your Quote Now
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                href="tel:+254700000000"
-                sx={{
-                  borderColor: 'black',
-                  borderWidth: 2,
-                  color: 'black',
-                  px: 5,
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  '&:hover': {
-                    borderWidth: 2,
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => onOpenModal('quotation')}
+                  sx={{
+                    backgroundColor: 'black',
+                    color: 'primary.main',
+                    px: 5,
+                    py: 1.5,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+                    },
+                    minWidth: { xs: '100%', sm: 'auto' },
+                  }}
+                >
+                  Get Your Quote Now
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="outlined"
+                  size="large"
+                  href="tel:+254700000000"
+                  sx={{
                     borderColor: 'black',
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                  },
-                  minWidth: { xs: '100%', sm: 'auto' },
-                }}
-              >
-                Call Us Directly
-              </Button>
+                    borderWidth: 2,
+                    color: 'black',
+                    px: 5,
+                    py: 1.5,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderWidth: 2,
+                      borderColor: 'black',
+                      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                    },
+                    minWidth: { xs: '100%', sm: 'auto' },
+                  }}
+                >
+                  Call Us Directly
+                </Button>
+              </motion.div>
             </Stack>
           </motion.div>
         </motion.div>
